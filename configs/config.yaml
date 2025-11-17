@@ -1,0 +1,31 @@
+server:
+  port: 8080
+  host: "0.0.0.0"
+  read_timeout: 30s
+  write_timeout: 30s
+  shutdown_timeout: 30s
+  max_header_bytes: 1048576  # 1 MB
+
+log:
+  level: "info"
+  format: "json"
+
+cache:
+  enabled: false
+  host: "localhost"
+  port: 6379
+  password: ""
+  db: 0
+
+database:
+  host: "localhost"
+  port: 5432
+  user: "llmgate"
+  password: "llmgate"
+  database: "llmgate"
+  ssl_mode: "disable"
+
+metrics:
+  enabled: true
+  port: 9090
+  path: "/metrics"
