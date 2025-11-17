@@ -7,13 +7,16 @@ import (
 
 // Config holds all configuration for the application
 type Config struct {
-	Server    ServerConfig    `mapstructure:"server"`
-	Log       LogConfig       `mapstructure:"log"`
-	Cache     CacheConfig     `mapstructure:"cache"`
-	Database  DatabaseConfig  `mapstructure:"database"`
-	Metrics   MetricsConfig   `mapstructure:"metrics"`
-	Providers ProvidersConfig `mapstructure:"providers"`
-	Routing   RoutingConfig   `mapstructure:"routing"`
+	Server      ServerConfig      `mapstructure:"server"`
+	Log         LogConfig         `mapstructure:"log"`
+	Cache       CacheConfig       `mapstructure:"cache"`
+	Database    DatabaseConfig    `mapstructure:"database"`
+	Metrics     MetricsConfig     `mapstructure:"metrics"`
+	Providers   ProvidersConfig   `mapstructure:"providers"`
+	Routing     RoutingConfig     `mapstructure:"routing"`
+	Cost        CostConfig        `mapstructure:"cost"`
+	RateLimit   RateLimitConfig   `mapstructure:"rate_limit"`
+	Optimization OptimizationConfig `mapstructure:"optimization"`
 }
 
 // ServerConfig holds HTTP server configuration
@@ -162,4 +165,26 @@ type RoutingConfig struct {
 	EnableHealthChecks  bool   `mapstructure:"enable_health_checks"`
 	HealthCheckInterval int    `mapstructure:"health_check_interval"` // in seconds
 	EnableFallback      bool   `mapstructure:"enable_fallback"`
+}
+
+// CostConfig holds cost tracking configuration
+type CostConfig struct {
+	Enabled           bool `mapstructure:"enabled"`
+	BufferSize        int  `mapstructure:"buffer_size"`
+	FlushIntervalSecs int  `mapstructure:"flush_interval_secs"`
+}
+
+// RateLimitConfig holds rate limiting configuration
+type RateLimitConfig struct {
+	Enabled     bool   `mapstructure:"enabled"`
+	DefaultTier string `mapstructure:"default_tier"` // free, pro, enterprise
+}
+
+// OptimizationConfig holds token optimization configuration
+type OptimizationConfig struct {
+	EnableCompression     bool `mapstructure:"enable_compression"`
+	EnableTruncation      bool `mapstructure:"enable_truncation"`
+	MaxPromptTokens       int  `mapstructure:"max_prompt_tokens"`
+	MaxResponseTokens     int  `mapstructure:"max_response_tokens"`
+	EnableSmartTruncation bool `mapstructure:"enable_smart_truncation"`
 }
