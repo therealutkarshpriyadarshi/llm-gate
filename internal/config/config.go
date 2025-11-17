@@ -99,8 +99,12 @@ func (c *CacheConfig) GetRedisAddress() string {
 
 // ProvidersConfig holds configuration for LLM providers
 type ProvidersConfig struct {
-	OpenAI  OpenAIConfig `mapstructure:"openai"`
-	Enabled []string     `mapstructure:"enabled"` // List of enabled providers
+	OpenAI    OpenAIConfig    `mapstructure:"openai"`
+	Anthropic AnthropicConfig `mapstructure:"anthropic"`
+	Azure     AzureConfig     `mapstructure:"azure"`
+	Bedrock   BedrockConfig   `mapstructure:"bedrock"`
+	Vertex    VertexConfig    `mapstructure:"vertex"`
+	Enabled   []string        `mapstructure:"enabled"` // List of enabled providers
 }
 
 // OpenAIConfig holds OpenAI provider configuration
@@ -109,6 +113,41 @@ type OpenAIConfig struct {
 	BaseURL      string `mapstructure:"base_url"`
 	Organization string `mapstructure:"organization"`
 	Enabled      bool   `mapstructure:"enabled"`
+}
+
+// AnthropicConfig holds Anthropic provider configuration
+type AnthropicConfig struct {
+	APIKey  string `mapstructure:"api_key"`
+	BaseURL string `mapstructure:"base_url"`
+	Version string `mapstructure:"version"`
+	Enabled bool   `mapstructure:"enabled"`
+}
+
+// AzureConfig holds Azure OpenAI provider configuration
+type AzureConfig struct {
+	APIKey         string `mapstructure:"api_key"`
+	Endpoint       string `mapstructure:"endpoint"`
+	APIVersion     string `mapstructure:"api_version"`
+	DeploymentName string `mapstructure:"deployment_name"`
+	Enabled        bool   `mapstructure:"enabled"`
+}
+
+// BedrockConfig holds AWS Bedrock provider configuration
+type BedrockConfig struct {
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	SecretAccessKey string `mapstructure:"secret_access_key"`
+	SessionToken    string `mapstructure:"session_token"`
+	Region          string `mapstructure:"region"`
+	Enabled         bool   `mapstructure:"enabled"`
+}
+
+// VertexConfig holds Google Vertex AI provider configuration
+type VertexConfig struct {
+	ProjectID          string `mapstructure:"project_id"`
+	Location           string `mapstructure:"location"`
+	APIKey             string `mapstructure:"api_key"`
+	ServiceAccountJSON string `mapstructure:"service_account_json"`
+	Enabled            bool   `mapstructure:"enabled"`
 }
 
 // RoutingConfig holds routing configuration
