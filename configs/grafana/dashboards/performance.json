@@ -1,0 +1,79 @@
+{
+  "title": "LLM Gateway - Performance",
+  "uid": "llm-gateway-performance",
+  "tags": ["llm-gateway", "performance"],
+  "timezone": "",
+  "schemaVersion": 38,
+  "version": 0,
+  "refresh": "10s",
+  "panels": [
+    {
+      "title": "Request Latency (p50, p95, p99)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, sum(rate(llmgate_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p50"},
+        {"expr": "histogram_quantile(0.95, sum(rate(llmgate_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p95"},
+        {"expr": "histogram_quantile(0.99, sum(rate(llmgate_http_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99"}
+      ]
+    },
+    {
+      "title": "LLM Provider Latency",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum(rate(llmgate_llm_request_duration_seconds_bucket[5m])) by (provider, le))", "legendFormat": "{{provider}} p95"}
+      ]
+    },
+    {
+      "title": "Cache Lookup Duration",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, rate(llmgate_cache_lookup_duration_seconds_bucket[5m]))", "legendFormat": "p95"},
+        {"expr": "histogram_quantile(0.99, rate(llmgate_cache_lookup_duration_seconds_bucket[5m]))", "legendFormat": "p99"}
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+      "targets": [
+        {"expr": "sum(rate(llmgate_llm_errors_total[5m])) by (provider, error_type)", "legendFormat": "{{provider}}: {{error_type}}"}
+      ]
+    },
+    {
+      "title": "Requests In Flight",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+      "targets": [
+        {"expr": "llmgate_http_requests_in_flight", "legendFormat": "in-flight"}
+      ]
+    },
+    {
+      "title": "Active Goroutines",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 24},
+      "targets": [
+        {"expr": "llmgate_goroutines_active", "legendFormat": "goroutines"}
+      ]
+    },
+    {
+      "title": "Memory Allocated",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 24},
+      "targets": [
+        {"expr": "llmgate_memory_allocated_bytes", "legendFormat": "allocated"}
+      ]
+    },
+    {
+      "title": "Redis Connection Pool",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 24},
+      "targets": [
+        {"expr": "llmgate_redis_connection_pool_size", "legendFormat": "{{state}}"}
+      ]
+    }
+  ],
+  "time": {"from": "now-1h", "to": "now"}
+}
