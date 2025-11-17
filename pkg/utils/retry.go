@@ -56,3 +56,24 @@ func Retry(ctx context.Context, config RetryConfig, fn func() error) error {
 
 	return lastErr
 }
+
+// RetryWithBackoff executes a function with simple exponential backoff
+func RetryWithBackoff(ctx context.Context, maxRetries int, initialDelay time.Duration, fn func() error) error {
+	config := RetryConfig{
+		MaxAttempts: maxRetries,
+		InitialWait: initialDelay,
+		MaxWait:     30 * time.Second,
+		Multiplier:  2.0,
+	}
+	return Retry(ctx, config, fn)
+}
+
+// IntPtr returns a pointer to an int value
+func IntPtr(i int) *int {
+	return &i
+}
+
+// Float64Ptr returns a pointer to a float64 value
+func Float64Ptr(f float64) *float64 {
+	return &f
+}
