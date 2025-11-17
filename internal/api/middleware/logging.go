@@ -4,14 +4,15 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rs/zerolog/log"
+	"github.com/therealutkarshpriyadarshi/llm-gate/internal/telemetry"
 )
 
-// responseWriter wraps http.ResponseWriter to capture status code
+// responseWriter wraps http.ResponseWriter to capture status code and size
 type responseWriter struct {
 	http.ResponseWriter
 	statusCode int
 	written    bool
+	size       int64
 }
 
 func (rw *responseWriter) WriteHeader(code int) {
@@ -26,13 +27,16 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 	if !rw.written {
 		rw.WriteHeader(http.StatusOK)
 	}
-	return rw.ResponseWriter.Write(b)
+	n, err := rw.ResponseWriter.Write(b)
+	rw.size += int64(n)
+	return n, err
 }
 
-// Logging middleware logs HTTP requests
+// Logging middleware logs HTTP requests with enhanced telemetry
 func Logging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
+		ctx := r.Context()
 
 		// Wrap response writer
 		wrapped := &responseWriter{
@@ -43,14 +47,30 @@ func Logging(next http.Handler) http.Handler {
 		// Call next handler
 		next.ServeHTTP(wrapped, r)
 
-		// Log request
+		// Calculate duration
 		duration := time.Since(start)
-		log.Info().
-			Str("method", r.Method).
-			Str("path", r.URL.Path).
-			Str("remote_addr", r.RemoteAddr).
-			Int("status", wrapped.statusCode).
-			Dur("duration_ms", duration).
-			Msg("HTTP request")
+
+		// Create structured log entry
+		reqLog := telemetry.RequestLog{
+			Method:        r.Method,
+			Path:          r.URL.Path,
+			Query:         r.URL.RawQuery,
+			StatusCode:    wrapped.statusCode,
+			Duration:      float64(duration.Milliseconds()),
+			UserAgent:     r.UserAgent(),
+			RemoteAddr:    r.RemoteAddr,
+			RequestSize:   r.ContentLength,
+			ResponseSize:  wrapped.size,
+			CorrelationID: telemetry.GetCorrelationID(ctx),
+			RequestID:     telemetry.GetRequestID(ctx),
+			UserID:        telemetry.GetUserID(ctx),
+			TenantID:      telemetry.GetTenantID(ctx),
+		}
+
+		// Log the request
+		telemetry.LogRequest(ctx, reqLog)
+
+		// Record metrics
+		telemetry.RecordHTTPRequest(r.Method, r.URL.Path, wrapped.statusCode, duration.Seconds())
 	})
 }

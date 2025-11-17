@@ -61,3 +61,24 @@ optimization:
   max_prompt_tokens: 4000
   max_response_tokens: 2000
   enable_smart_truncation: true
+
+# Phase 8: Observability & Monitoring
+telemetry:
+  tracing:
+    enabled: true
+    service_name: "llm-gateway"
+    service_version: "1.0.0"
+    environment: "development"
+    otlp_endpoint: "localhost:4317"
+    sampling_rate: 1.0
+    export_timeout: 30s
+    export_batch_size: 512
+    export_max_queue: 2048
+
+  logging:
+    level: "info"
+    format: "json"
+    enable_caller: true
+    enable_stack_trace: false
+    sampling_enabled: false
+    sampling_rate: 100
