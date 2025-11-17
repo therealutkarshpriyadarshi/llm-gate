@@ -44,3 +44,20 @@ routing:
   enable_health_checks: true
   health_check_interval: 30  # seconds
   enable_fallback: true
+
+# Phase 7: Cost Optimization & Rate Limiting
+cost:
+  enabled: true
+  buffer_size: 100
+  flush_interval_secs: 10
+
+rate_limit:
+  enabled: true
+  default_tier: "free"  # free, pro, enterprise
+
+optimization:
+  enable_compression: true
+  enable_truncation: true
+  max_prompt_tokens: 4000
+  max_response_tokens: 2000
+  enable_smart_truncation: true
