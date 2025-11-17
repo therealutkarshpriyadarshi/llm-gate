@@ -7,10 +7,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/therealutkarshpriyadarshi/llm-gate/internal/api/handlers"
 	"github.com/therealutkarshpriyadarshi/llm-gate/internal/api/middleware"
+	"github.com/therealutkarshpriyadarshi/llm-gate/internal/routing"
 )
 
 // Router creates and configures the HTTP router
-func Router(version string) http.Handler {
+func Router(version string, llmRouter *routing.Router) http.Handler {
 	r := chi.NewRouter()
 
 	// Apply global middleware
@@ -28,7 +29,7 @@ func Router(version string) http.Handler {
 	// Metrics endpoint (on different path to avoid middleware)
 	r.Handle("/metrics", promhttp.Handler())
 
-	// API routes (to be implemented in later phases)
+	// API routes
 	r.Route("/v1", func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
@@ -36,12 +37,9 @@ func Router(version string) http.Handler {
 			w.Write([]byte(`{"message":"LLM Gateway API v1","version":"` + version + `"}`))
 		})
 
-		// Chat completions endpoint (placeholder for Phase 2)
-		r.Post("/chat/completions", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusNotImplemented)
-			w.Write([]byte(`{"error":"not implemented yet - coming in Phase 2"}`))
-		})
+		// Chat completions endpoint
+		chatHandler := handlers.NewChatHandler(llmRouter)
+		r.Post("/chat/completions", chatHandler.HandleChatCompletion)
 	})
 
 	return r

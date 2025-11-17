@@ -7,11 +7,13 @@ import (
 
 // Config holds all configuration for the application
 type Config struct {
-	Server   ServerConfig   `mapstructure:"server"`
-	Log      LogConfig      `mapstructure:"log"`
-	Cache    CacheConfig    `mapstructure:"cache"`
-	Database DatabaseConfig `mapstructure:"database"`
-	Metrics  MetricsConfig  `mapstructure:"metrics"`
+	Server    ServerConfig    `mapstructure:"server"`
+	Log       LogConfig       `mapstructure:"log"`
+	Cache     CacheConfig     `mapstructure:"cache"`
+	Database  DatabaseConfig  `mapstructure:"database"`
+	Metrics   MetricsConfig   `mapstructure:"metrics"`
+	Providers ProvidersConfig `mapstructure:"providers"`
+	Routing   RoutingConfig   `mapstructure:"routing"`
 }
 
 // ServerConfig holds HTTP server configuration
@@ -93,4 +95,26 @@ func (c *DatabaseConfig) GetDSN() string {
 // GetRedisAddress returns the Redis address in host:port format
 func (c *CacheConfig) GetRedisAddress() string {
 	return fmt.Sprintf("%s:%d", c.Host, c.Port)
+}
+
+// ProvidersConfig holds configuration for LLM providers
+type ProvidersConfig struct {
+	OpenAI  OpenAIConfig `mapstructure:"openai"`
+	Enabled []string     `mapstructure:"enabled"` // List of enabled providers
+}
+
+// OpenAIConfig holds OpenAI provider configuration
+type OpenAIConfig struct {
+	APIKey       string `mapstructure:"api_key"`
+	BaseURL      string `mapstructure:"base_url"`
+	Organization string `mapstructure:"organization"`
+	Enabled      bool   `mapstructure:"enabled"`
+}
+
+// RoutingConfig holds routing configuration
+type RoutingConfig struct {
+	Strategy            string `mapstructure:"strategy"` // round-robin, random, least-latency, cost-optimized
+	EnableHealthChecks  bool   `mapstructure:"enable_health_checks"`
+	HealthCheckInterval int    `mapstructure:"health_check_interval"` // in seconds
+	EnableFallback      bool   `mapstructure:"enable_fallback"`
 }

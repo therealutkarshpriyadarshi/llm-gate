@@ -29,3 +29,18 @@ metrics:
   enabled: true
   port: 9090
   path: "/metrics"
+
+providers:
+  enabled:
+    - openai
+  openai:
+    enabled: true
+    api_key: "${OPENAI_API_KEY}"
+    base_url: "https://api.openai.com/v1"
+    organization: ""
+
+routing:
+  strategy: "round-robin"
+  enable_health_checks: true
+  health_check_interval: 30  # seconds
+  enable_fallback: true
