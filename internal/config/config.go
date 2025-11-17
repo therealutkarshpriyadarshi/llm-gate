@@ -34,11 +34,17 @@ type LogConfig struct {
 
 // CacheConfig holds Redis cache configuration
 type CacheConfig struct {
-	Enabled  bool   `mapstructure:"enabled"`
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Password string `mapstructure:"password"`
-	DB       int    `mapstructure:"db"`
+	Enabled             bool    `mapstructure:"enabled"`
+	Host                string  `mapstructure:"host"`
+	Port                int     `mapstructure:"port"`
+	Password            string  `mapstructure:"password"`
+	DB                  int     `mapstructure:"db"`
+	SimilarityThreshold float32 `mapstructure:"similarity_threshold"`
+	DefaultTTLHours     int     `mapstructure:"default_ttl_hours"`
+	EmbeddingModel      string  `mapstructure:"embedding_model"`
+	EmbeddingAPIKey     string  `mapstructure:"embedding_api_key"`
+	UseCompression      bool    `mapstructure:"use_compression"`
+	EnableStats         bool    `mapstructure:"enable_stats"`
 }
 
 // DatabaseConfig holds PostgreSQL database configuration
